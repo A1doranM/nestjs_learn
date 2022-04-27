@@ -8,14 +8,16 @@ import {
     Param,
     ParseIntPipe,
     Post,
-    Put,
-    UseFilters, UsePipes
+    Put, SetMetadata,
+    UseFilters, UseGuards, UsePipes
 } from "@nestjs/common";
 import {CatsService} from "../services/cats.service";
 import {CreateCatDto} from "../dto/cats/CreateCatDto";
 import {UpdateCatDto} from "../dto/cats/UpdateCatDto";
-import {HttpExceptionFilter} from "../filters/http-exception.filter";
-import {ValidationPipe} from "../pipes/validation.pipe";
+import {HttpExceptionFilter} from "../../filters/http-exception.filter";
+import {ValidationPipe} from "../../pipes/validation.pipe";
+import {AuthGuard} from "../guards/auth.guard";
+import {Roles} from "../../utils/roles.decorator";
 
 
 @Controller("cats")
@@ -25,8 +27,10 @@ export class CatsController {
     }
 
     @Post()
-    @UseFilters(HttpExceptionFilter)
+    @UseFilters(new HttpExceptionFilter())
     @UsePipes(ValidationPipe)
+    @Roles("admin")
+    @UseGuards(new AuthGuard())
     create(@Body() createCatDto: CreateCatDto) {
         this.catsService.create(createCatDto);
     }
@@ -40,6 +44,7 @@ export class CatsController {
     }
 
     @Get(":id")
+    @UseGuards(new AuthGuard())
     async findOne(
         @Param("id", new ParseIntPipe({errorHttpStatusCode: HttpStatus.NOT_ACCEPTABLE})) id: number
     ) {
@@ -47,11 +52,13 @@ export class CatsController {
     }
 
     @Put(":id")
+    @UseGuards(new AuthGuard())
     update(@Param("id") id: string, @Body() updateCatDto: UpdateCatDto) {
         return `This action updates a #${id} cat`;
     }
 
     @Delete(":id")
+    @UseGuards(new AuthGuard())
     remove(@Param("id") id: string) {
         return `This action removes a #${id} cat`;
     }
