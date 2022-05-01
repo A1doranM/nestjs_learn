@@ -3,21 +3,19 @@ import {
     Controller,
     Delete,
     Get,
-    HttpException,
     HttpStatus,
     Param,
     ParseIntPipe,
     Post,
-    Put, SetMetadata,
-    UseFilters, UseGuards, UsePipes
+    Put,
+    UseFilters, UseGuards,
 } from "@nestjs/common";
 import {CatsService} from "../services/cats.service";
 import {CreateCatDto} from "../dto/cats/CreateCatDto";
 import {UpdateCatDto} from "../dto/cats/UpdateCatDto";
 import {HttpExceptionFilter} from "../../filters/http-exception.filter";
-import {ValidationPipe} from "../../pipes/validation.pipe";
-import {AuthGuard} from "../guards/auth.guard";
 import {Roles} from "../../utils/roles.decorator";
+import {AuthGuard} from "../guards/auth.guard";
 
 
 @Controller("cats")
@@ -27,9 +25,9 @@ export class CatsController {
     }
 
     @Post()
-    @UseFilters(new HttpExceptionFilter())
-    @UsePipes(ValidationPipe)
-    @Roles("admin")
+    @UseFilters(HttpExceptionFilter)
+    // @UsePipes(ValidationPipe)
+    @Roles('admin')
     @UseGuards(new AuthGuard())
     create(@Body() createCatDto: CreateCatDto) {
         this.catsService.create(createCatDto);
@@ -37,10 +35,11 @@ export class CatsController {
 
     @Get()
     findAll() {
-        throw new HttpException({
-            status: HttpStatus.FORBIDDEN,
-            error: "This is custom message"
-        }, HttpStatus.FORBIDDEN);
+        return this.catsService.findAll();
+        // throw new HttpException({
+        //     status: HttpStatus.FORBIDDEN,
+        //     error: "This is custom message"
+        // }, HttpStatus.FORBIDDEN);
     }
 
     @Get(":id")

@@ -1,15 +1,15 @@
 import {MiddlewareConsumer, Module, NestModule, RequestMethod} from "@nestjs/common";
 import {CatsModule} from "./cats/cats.module";
 import {LoggerMiddleware} from "./logger/logger.middleware";
-import {APP_GUARD} from "@nestjs/core";
-import {RolesGuard} from "./cats/guards/roles.guard";
+import {APP_INTERCEPTOR} from "@nestjs/core";
+import {LoggingInterceptor} from "./interceptors/logging.interceptor";
 
 @Module({
     imports: [CatsModule],
     providers: [
         {
-            provide: APP_GUARD,
-            useClass: RolesGuard,
+            provide: APP_INTERCEPTOR,
+            useClass: LoggingInterceptor,
         },
     ],
 })
