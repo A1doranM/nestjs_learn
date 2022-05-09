@@ -27,7 +27,7 @@ export class CatsController {
     @Post()
     @UseFilters(HttpExceptionFilter)
     // @UsePipes(ValidationPipe)
-    @Roles('admin')
+    @Roles("admin")
     @UseGuards(new AuthGuard())
     create(@Body() createCatDto: CreateCatDto) {
         this.catsService.create(createCatDto);
